@@ -18,6 +18,15 @@ function formatPrice(n: number): string {
   return "$" + n.toLocaleString();
 }
 
+/** Caminho do sprite de item no formato do jogo (ex: amuletCoin → ./src/assets/images/items/amulet-coin.png). */
+function itemSpritePath(id: string): string {
+  const kebab = id
+    .replace(/([A-Z])/g, "-$1")
+    .toLowerCase()
+    .replace(/^-/, "");
+  return `./src/assets/images/items/${kebab}.png`;
+}
+
 interface ShopSectionProps {
   data: SaveData;
   onChange: (next: SaveData) => void;
@@ -81,9 +90,27 @@ export function ShopSection({ data, onChange }: ShopSectionProps) {
     setItemList(itemList.filter((_, i) => i !== index));
   };
   const addToItemList = () => {
-    if (newItemId.trim()) {
-      setItemList([...itemList, newItemId.trim()]);
-      setNewItemId("");
+    const id = newItemId.trim();
+    if (!id) return;
+    setItemList([...itemList, id]);
+    setNewItemId("");
+
+    const existing = itemStock.find(
+      (e): e is ShopItemStockEntry =>
+        e != null && typeof e === "object" && e.id === id,
+    );
+    if (existing) {
+      if (!existing.sprite) {
+        const idx = itemStock.indexOf(existing);
+        const next = [...itemStock];
+        next[idx] = { ...existing, sprite: itemSpritePath(id) };
+        setItemStock(next);
+      }
+    } else {
+      setItemStock([
+        ...itemStock,
+        { id, sprite: itemSpritePath(id), price: 0 },
+      ]);
     }
   };
 
@@ -323,15 +350,11 @@ export function ShopSection({ data, onChange }: ShopSectionProps) {
                     className="flex items-center gap-2 p-2 rounded-lg bg-default-100 border border-default-200 min-h-[48px] w-full"
                   >
                     <div className="flex shrink-0 items-center justify-center w-8 h-8 rounded bg-default-200">
-                      {entry?.sprite ? (
-                        <SpriteImage
-                          alt={itemDisplayName(entry)}
-                          size={32}
-                          src={entry.sprite}
-                        />
-                      ) : (
-                        <span className="text-xs text-default-400">?</span>
-                      )}
+                      <SpriteImage
+                        alt={entry ? itemDisplayName(entry) : id}
+                        size={32}
+                        src={entry?.sprite ?? itemSpritePath(id)}
+                      />
                     </div>
                     <span
                       className="text-sm font-mono truncate min-w-0 flex-1"
