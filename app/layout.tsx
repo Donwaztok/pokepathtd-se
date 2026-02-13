@@ -1,14 +1,15 @@
-import "@/styles/globals.css";
-import clsx from "clsx";
-import { Metadata, Viewport } from "next";
-import { Analytics } from "@vercel/analytics/next";
-
-import { Providers } from "./providers";
-
-import { JsonLd } from "@/components/seo/JsonLd";
+import { AdSenseBanner } from "@/components/adsense/AdSenseBanner";
 import { Navbar } from "@/components/navbar";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { fontSans } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
+import "@/styles/globals.css";
+import { Analytics } from "@vercel/analytics/next";
+import clsx from "clsx";
+import { Metadata, Viewport } from "next";
+import { Providers } from "./providers";
+
+const adsenseClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.baseUrl),
@@ -58,6 +59,13 @@ export default function RootLayout({
     <html suppressHydrationWarning lang="en">
       <head>
         <JsonLd />
+        {adsenseClientId && (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
+            crossOrigin="anonymous"
+          />
+        )}
       </head>
       <body
         className={clsx(
@@ -76,6 +84,7 @@ export default function RootLayout({
                 Poké Path Save Editor · Powered by Next.js + HeroUI
               </span>
             </footer>
+            <AdSenseBanner />
           </div>
         </Providers>
         <Analytics />
