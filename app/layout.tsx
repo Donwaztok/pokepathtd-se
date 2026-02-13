@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import clsx from "clsx";
 import { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 
 import { Providers } from "./providers";
 
@@ -53,6 +54,7 @@ export default function RootLayout({
             </footer>
           </div>
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
