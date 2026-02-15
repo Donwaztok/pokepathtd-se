@@ -9,9 +9,11 @@ import {
 } from "@/components/editor";
 import { siteConfig } from "@/config/site";
 import type { SaveData } from "@/types/save";
+import { Accordion, AccordionItem } from "@heroui/accordion";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
+import { Input } from "@heroui/input";
 import { Textarea } from "@heroui/input";
 import { Tab, Tabs } from "@heroui/tabs";
 import { useCallback, useRef, useState } from "react";
@@ -194,6 +196,61 @@ export default function Home() {
         </p>
       </div>
 
+      <Accordion variant="bordered" selectionMode="multiple">
+        <AccordionItem key="how-to-use" aria-label="How to use" title="📖 How to use">
+          <div className="space-y-4 text-default-700 pb-2">
+            <p>
+              The <strong>Poké Path Save Editor</strong> lets you edit the save
+              file from the{" "}
+              <a
+                className="text-primary underline underline-offset-2 hover:opacity-80"
+                href={siteConfig.links.pokepath}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Poké Path TD
+              </a>{" "}
+              (tower defense) game. The save is exported by the game in Base64
+              format inside a .txt file.
+            </p>
+            <h4 className="font-semibold text-foreground">Step 1 — Get your save</h4>
+            <p>
+              In{" "}
+              <a
+                className="text-primary underline underline-offset-2 hover:opacity-80"
+                href={siteConfig.links.pokepath}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Poké Path TD
+              </a>
+              , go to settings and export your save.
+              The game generates a .txt file containing a long Base64 string.
+            </p>
+            <h4 className="font-semibold text-foreground">Step 2 — Decode</h4>
+            <p>
+              Paste the Base64 string in the field above or use &quot;Choose .txt file&quot;
+              to load the exported file. Click <strong>Decode</strong> to
+              decode and view the save contents.
+            </p>
+            <h4 className="font-semibold text-foreground">Step 3 — Edit</h4>
+            <p>
+              Use the <strong>Player</strong>, <strong>Team</strong>,{" "}
+              <strong>Box</strong>, <strong>Area</strong> and <strong>Shop</strong>{" "}
+              tabs to edit the data. You can change gold, stars, Pokémon in your
+              team, shop items and more. The <strong>JSON</strong> tab allows
+              advanced editing directly in the raw format.
+            </p>
+            <h4 className="font-semibold text-foreground">Step 4 — Save</h4>
+            <p>
+              After editing, click <strong>Save and encode</strong>. Copy the
+              new Base64 string or download the .txt file. Replace the contents of
+              your original save file with the new string and import it in the game.
+            </p>
+          </div>
+        </AccordionItem>
+      </Accordion>
+
       <Card>
         <CardHeader>
           <h2 className="text-lg font-semibold">Input</h2>
@@ -232,11 +289,80 @@ export default function Home() {
         </CardBody>
       </Card>
 
+      {!saveData && (
+        <Card className="border-dashed border-2 border-default-200">
+          <CardHeader className="flex flex-col items-start gap-2">
+            <div className="flex items-center gap-2 w-full">
+              <h2 className="text-lg font-semibold">Editor de save</h2>
+              <Chip color="warning" size="sm" variant="flat">
+                Read-only — decode a save to edit
+              </Chip>
+            </div>
+          </CardHeader>
+          <CardBody>
+            <Tabs selectedKey="player">
+              <Tab key="player" title="👤 Player">
+                <div className="py-4 space-y-4 opacity-60">
+                  <p className="text-default-500 text-sm">
+                    Fields will appear here after decoding a save.
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input isReadOnly label="Name" placeholder="—" />
+                    <Input isReadOnly label="Gold" placeholder="—" />
+                    <Input isReadOnly label="Stars" placeholder="—" />
+                  </div>
+                </div>
+              </Tab>
+              <Tab key="team" title="⚔️ Team">
+                <div className="py-4">
+                  <p className="text-default-500 text-sm opacity-60">
+                    Your Pokémon team will appear here after decoding.
+                  </p>
+                </div>
+              </Tab>
+              <Tab key="box" title="📦 Box">
+                <div className="py-4">
+                  <p className="text-default-500 text-sm opacity-60">
+                    Your Pokémon box will appear here after decoding.
+                  </p>
+                </div>
+              </Tab>
+              <Tab key="area" title="🗺️ Area">
+                <div className="py-4">
+                  <p className="text-default-500 text-sm opacity-60">
+                    Areas and routes will appear here after decoding.
+                  </p>
+                </div>
+              </Tab>
+              <Tab key="shop" title="🛒 Shop">
+                <div className="py-4">
+                  <p className="text-default-500 text-sm opacity-60">
+                    Shop items will appear here after decoding.
+                  </p>
+                </div>
+              </Tab>
+              <Tab key="json" title="📄 JSON">
+                <div className="py-4">
+                  <p className="text-default-500 text-sm opacity-60">
+                    Advanced JSON editing available after decoding.
+                  </p>
+                </div>
+              </Tab>
+            </Tabs>
+          </CardBody>
+        </Card>
+      )}
+
       {saveData && (
         <>
           <Card>
-            <CardHeader>
-              <h2 className="text-lg font-semibold">Edit save</h2>
+            <CardHeader className="flex flex-col items-start gap-2">
+              <div className="flex items-center gap-2 w-full">
+                <h2 className="text-lg font-semibold">Edit save</h2>
+                <Chip color="success" size="sm" variant="flat">
+                  Edit mode
+                </Chip>
+              </div>
             </CardHeader>
             <CardBody>
               <Tabs

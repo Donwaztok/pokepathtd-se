@@ -19,6 +19,7 @@ export const siteConfig = {
   links: {
     github: "https://github.com/Donwaztok/pokepathtd-se",
     docs: "https://heroui.com",
+    pokepath: "https://pokepath.gg",
   },
   /** SEO: palavras-chave para indexação */
   keywords: [
